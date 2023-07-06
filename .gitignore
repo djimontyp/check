@@ -162,3 +162,4 @@ cython_debug/
 app/staticfiles_collected
 app/media
 .python-version
+.idea

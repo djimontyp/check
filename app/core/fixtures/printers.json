@@ -1,0 +1,22 @@
+[
+  {
+    "model": "core.printer",
+    "pk": 1,
+    "fields": {
+      "name": "Printer 1",
+      "point_id": "12345",
+      "api_key": "UWUKEQ827G5ga9Mqh7dM0ypySRM",
+      "check_type": "kitchen"
+    }
+  },
+  {
+    "model": "core.printer",
+    "pk": 2,
+    "fields": {
+      "name": "Printer 2",
+      "point_id": "12345",
+      "api_key": "NwW4Ib23aX3hg680VIR_LZ8L3Vk",
+      "check_type": "client"
+    }
+  }
+]

@@ -1,0 +1,67 @@
+version: "3"
+
+services:
+  web:
+    container_name: check_web
+    build: .
+    ports:
+      - "8888:7777"
+    volumes:
+      - "./app:/app:rw"
+    command: bash -c "python3 manage.py wait_for_db &&
+                      python3 manage.py migrate --no-input &&
+                      python3 manage.py collectstatic --no-input &&
+                      python3 manage.py runserver 0.0.0.0:7777"
+    env_file: .docker.env
+    networks:
+      - check_net
+    depends_on:
+      - db
+
+  db:
+    container_name: check_db
+    image: postgres:14-alpine
+    env_file: .docker.env
+    ports:
+      - "15432:5432"
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    networks:
+      - check_net
+
+  redis:
+    container_name: check_redis
+    image: redis:alpine
+    networks:
+      - check_net
+
+  celery:
+    container_name: check_celery
+    restart: always
+    build: .
+    command: celery -A checks worker -l info -B
+    volumes:
+      - ./app:/app
+    env_file: .docker.env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - check_net
+
+  pdf:
+    container_name: check_pdf
+    image: openlabs/docker-wkhtmltopdf-aas
+    volumes:
+      - "./app:/app:rw"
+    env_file: .docker.env
+    networks:
+      - check_net
+    depends_on:
+      - db
+
+volumes:
+  db_volume:
+
+networks:
+  check_net:
